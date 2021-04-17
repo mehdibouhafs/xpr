@@ -1,0 +1,52 @@
+@import "assets/base";
+
+table {
+  width: 100%;
+}
+
+.mat-row:hover {
+  background-color: blanchedalmond;
+}
+.mat-row mat-checkbox {
+
+}
+.mat-row:hover mat-checkbox {
+  display: block;
+}
+
+
+
+.mat-checkbox {
+  display: inline-block;
+  height: 15px;
+  line-height: 0;
+  margin: auto;
+  margin-right: 8px;
+  order: 0;
+  position: unset;
+  vertical-align: middle;
+  white-space: nowrap;
+  width: 23px;
+  flex-shrink: 0;
+}
+
+
+tr.mat-header-row {
+  height: 25px;
+  font-size: 11px;
+}
+
+.ng-select.custom {
+  border:0px;
+  min-height: 0px;
+  border-radius: 0;
+}
+.ng-select.custom .ng-select-container  {
+  min-height: 0px;
+  border-radius: 0;
+}
+
+.mat-column-select {
+  overflow: initial;
+}
+
