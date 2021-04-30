@@ -13,19 +13,39 @@ export class BonRamassageService{
 
   ajouterBonRamassage(bonRamassage: BonRamassage){
 
-    return this.http.post(this.host + '/bonRamassages', bonRamassage,{headers: new HttpHeaders({'Authorization': this.authenticationService.getToken()})});
+    return this.http.post(this.host + '/bonRamassage/bonRamassages', bonRamassage,{headers: new HttpHeaders({'Authorization': this.authenticationService.getToken()})});
   }
 
   getBonRamassage(nom: string){
-    return this.http.get(this.host + '/bonRamassages/' + nom,{headers: new HttpHeaders({'Authorization': this.authenticationService.getToken()})});
+    return this.http.get(this.host + '/bonRamassage/bonRamassages/' + nom,{headers: new HttpHeaders({'Authorization': this.authenticationService.getToken()})});
   }
 
   modifierBonRamassage(bonRamassage: BonRamassage){
-    return this.http.put(this.host + '/editBonRamassage/' + bonRamassage.nom, bonRamassage,{headers: new HttpHeaders({'Authorization': this.authenticationService.getToken()})});
+    return this.http.put(this.host + '/bonRamassage/editBonRamassage/' + bonRamassage.nom, bonRamassage,{headers: new HttpHeaders({'Authorization': this.authenticationService.getToken()})});
   }
 
   supprimerBonRamassage(nom: string){
-    return this.http.delete(this.host + '/deleteBonRamassage/' + nom,{headers: new HttpHeaders({'Authorization': this.authenticationService.getToken()})});
+    return this.http.delete(this.host + '/bonRamassage/deleteBonRamassage/' + nom,{headers: new HttpHeaders({'Authorization': this.authenticationService.getToken()})});
+  }
+
+  getAllStatutsBonRamassages(){
+    return this.http.get(this.host + '/bonRamassage/getAllStatutsBonRamassage',{headers: new HttpHeaders({'Authorization': this.authenticationService.getToken()})});
+  }
+
+  getBonRamassageFilter(filter) {
+    return this.http.get(this.host + '/bonRamassage/listBonRamassages?' + this.toQueryString(filter), {headers: new HttpHeaders({'Authorization': this.authenticationService.getToken()})});
+  }
+
+  private toQueryString(query): string {
+    const parts = [];
+    for (const property in query ) {
+      const value = query[property];
+      if (value != null && value !== undefined) {
+        parts.push(encodeURIComponent(property) + '=' + encodeURIComponent(value));
+      }
+    }
+
+    return parts.join('&');
   }
 
 }

@@ -48,9 +48,9 @@
                 </ngb-panel>
               <ngb-panel id="ColisMenu2" *ngIf="this.showBonRamassages">
                   <ng-template ngbPanelHeader>
-                    <button  class="vsm-link"  [routerLink]="['/bonRamassages']">
+                    <button  class="vsm-link"  [routerLink]="['/bonsRamassages']">
                       <i class="vsm-icon pe-7s-file"></i>
-                      <span class="vsm-title" > Bons de Ramassage <div class="badge badge-danger ml-2">6</div></span>
+                      <span class="vsm-title" > Bons de Ramassage </span>
                     </button>
                   </ng-template>
               </ngb-panel>
@@ -58,11 +58,30 @@
                   <ng-template ngbPanelHeader>
                     <button  class="vsm-link"  [routerLink]="['/bonDeRetours']">
                       <i class="vsm-icon pe-7s-back-2"></i>
-                      <span class="vsm-title">Bons de retour <div class="badge badge-danger ml-2">10</div></span>
+                      <span class="vsm-title">Bons de retour </span>
                     </button>
                   </ng-template>
 
               </ngb-panel>
+
+              <ngb-panel id="secondaireMenu3" *ngIf="this.showFactures">
+                <ng-template ngbPanelHeader >
+                  <button  class="vsm-link"  [routerLink]="['/factures']">
+                    <i class="vsm-icon pe-7s-file"></i>
+                    <span class="vsm-title">Factures </span>
+                  </button>
+                </ng-template>
+              </ngb-panel>
+
+                <ngb-panel id="elementsMenu4" *ngIf="this.showBonExpeditions">
+                  <ng-template ngbPanelHeader>
+                    <button ngbPanelToggle class="vsm-link"  [routerLink]="['/bonExpeditionsStock']">
+                      <i class="vsm-icon pe-7s-note2"></i>
+                      <span class="vsm-title">Bon d'envoi stock </span>
+                    </button>
+                  </ng-template>
+                </ngb-panel>
+
 
 
               <ngb-panel>
@@ -94,19 +113,12 @@
                 <ng-template ngbPanelHeader>
                   <button ngbPanelToggle class="vsm-link"  [routerLink]="['/bonProduits']">
                     <i class="vsm-icon pe-7s-file"></i>
-                    <span class="vsm-title">Bon de produit <div class="badge badge-danger ml-2">6</div></span>
+                    <span class="vsm-title">Bon de produit </span>
 
                   </button>
                 </ng-template>
               </ngb-panel>
-              <ngb-panel id="elementsMenu4" *ngIf="this.showBonExpeditions">
-                <ng-template ngbPanelHeader>
-                  <button ngbPanelToggle class="vsm-link"  [routerLink]="['/bonExpeditionsStock']">
-                    <i class="vsm-icon pe-7s-note2"></i>
-                    <span class="vsm-title">Bon d'envoi stock <div class="badge badge-danger ml-2">6</div></span>
-                  </button>
-                </ng-template>
-              </ngb-panel>
+
 
 
               <ngb-panel id="secondaireMenu">
@@ -126,15 +138,9 @@
                 </ng-template>
               </ngb-panel>
 
-              <ngb-panel id="secondaireMenu3" *ngIf="this.showFactures">
-                <ng-template ngbPanelHeader >
-                  <button  class="vsm-link"  [routerLink]="['/factures']">
-                    <i class="vsm-icon pe-7s-file"></i>
-                    <span class="vsm-title">Factures <div class="badge badge-danger ml-2">6</div></span>
-                  </button>
-                </ng-template>
 
-              </ngb-panel>
+
+
               <ngb-panel id="secondaireMenu4" *ngIf="this.showDemandes">
                 <ng-template ngbPanelHeader >
                   <button  class="vsm-link"  [routerLink]="['/demandes']">

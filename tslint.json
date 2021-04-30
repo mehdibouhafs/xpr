@@ -12,19 +12,19 @@
     },
     "array-type": false,
     "arrow-parens": false,
-    "arrow-return-shorthand": true,
+    "arrow-return-shorthand": false,
     "deprecation": {
       "severity": "warn"
     },
-    "curly": true,
+    "curly": false,
     "import-blacklist": [
       true,
       "rxjs/Rx"
     ],
     "interface-name": false,
-    "eofline": true,
+    "eofline": false,
     "max-classes-per-file": false,
-    "import-spacing": true,
+    "import-spacing": false,
     "indent": {
       "options": [
         "spaces"
@@ -60,8 +60,8 @@
       true,
       "ignore-params"
     ],
-    "no-non-null-assertion": true,
-    "no-redundant-jsdoc": true,
+    "no-non-null-assertion": false,
+    "no-redundant-jsdoc": false,
     "no-switch-case-fall-through": true,
     "no-var-requires": false,
     "object-literal-key-quotes": [
@@ -75,13 +75,13 @@
       "single"
     ],
     "trailing-comma": false,
-    "no-output-on-prefix": true,
-    "no-inputs-metadata-property": true,
-    "no-outputs-metadata-property": true,
-    "no-host-metadata-property": true,
-    "no-input-rename": true,
-    "no-output-rename": true,
-    "use-lifecycle-interface": true,
+    "no-output-on-prefix": false,
+    "no-inputs-metadata-property": false,
+    "no-outputs-metadata-property": false,
+    "no-host-metadata-property": false,
+    "no-input-rename": false,
+    "no-output-rename": false,
+    "use-lifecycle-interface": false,
     "semicolon": {
       "options": [
         "always"
@@ -96,7 +96,7 @@
         "named": "never"
       }
     },
-    "use-pipe-transform-interface": true,
+    "use-pipe-transform-interface": false,
     "typedef-whitespace": {
       "options": [
         {
@@ -115,24 +115,15 @@
         }
       ]
     },
-    "component-class-suffix": true,
-    "directive-class-suffix": true,
+    "component-class-suffix": false,
+    "directive-class-suffix": false,
     "variable-name": {
       "options": [
         "ban-keywords",
         "check-format",
         "allow-pascal-case"
       ]
-    },
-    "whitespace": {
-      "options": [
-        "check-branch",
-        "check-decl",
-        "check-operator",
-        "check-separator",
-        "check-type",
-        "check-typecast"
-      ]
     }
+
   }
 }

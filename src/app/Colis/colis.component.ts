@@ -1,5 +1,13 @@
 import {SelectionModel} from '@angular/cdk/collections';
-import {AfterViewInit, ChangeDetectorRef, Component, HostListener, OnInit, TemplateRef, ViewChild} from '@angular/core';
+import {
+    AfterViewInit,
+    ChangeDetectorRef,
+    Component,
+    HostListener,
+    OnInit,
+    TemplateRef,
+    ViewChild
+} from '@angular/core';
 import {MatTableDataSource} from '@angular/material/table';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {AuthenticationService} from '../Services/authentification.service';
@@ -18,7 +26,10 @@ import {StatutColis} from '../models/model.statutColis';
 
 import {Commentaire} from '../models/model.commentaire';
 import {HistoriqueColis} from '../models/model.historiqueColis';
-
+import {NgxDrpOptions, PresetItem, Range} from 'ngx-mat-daterange-picker';
+import {MatCalendar} from '@angular/material/datepicker';
+//import {Moment} from 'moment';
+import * as moment from "moment";
 
 
 
@@ -32,17 +43,22 @@ import {HistoriqueColis} from '../models/model.historiqueColis';
 })
 export class ColisComponent implements  OnInit, AfterViewInit {
 
+    isLoading = true;
     public isFilterCollapsed = true;
-    filtredVille: Ville;
-    filtredStatut: StatutColis;
+    filtredVille: Ville = new Ville();
+    filtredStatut: StatutColis = new StatutColis();
     statuts: Array<StatutColis>;
     filtredPage: number;
     pages: Array<number>;
     currentColisHistorique: Array<HistoriqueColis>;
     currentColis: Colis;
+    updatedColis: Colis;
 
     errorForm: boolean;
     errorMessage: string;
+
+    errorUpdateForm: boolean;
+    errorUpdateMessage: string;
 
     errorDeleteForm: boolean;
     errorDeleteMessage: string;
@@ -50,16 +66,22 @@ export class ColisComponent implements  OnInit, AfterViewInit {
     errorAddCommentaireForm: boolean;
     errorAddCommentaireMessage: string;
 
+    range: Range = {fromDate: new Date(), toDate: new Date()};
+    options: NgxDrpOptions;
+    presets: Array<PresetItem> = [];
+    @ViewChild(MatCalendar)
+    matCalendar: MatCalendar<Date>;
+
     currentColisCommentaire: Array<Commentaire>;
 
   showColis: boolean;
   writeColis: boolean;
 
-  villes = new Array();
+  villes = new Array<Ville>();
 
   selectedVille: any;
 
-  coliss = new Array();
+  coliss = new Array<Colis>();
 
   mode: number;
 
@@ -68,6 +90,8 @@ export class ColisComponent implements  OnInit, AfterViewInit {
   pageSize: number;
 
   filter: string;
+
+    selectedVilleUpdate: Ville;
 
     newCommentaire: string;
 
@@ -78,8 +102,12 @@ export class ColisComponent implements  OnInit, AfterViewInit {
 
     selectColis: Colis;
 
-  displayedColumns: string[] = ['select', 'dateCreation',	'statut', 'codeEnvoi',	'idIntern', 'destinataire',
+    selectedPeriode: {start: any, end: any};
+
+  displayedColumns: string[] = ['select', 'createdDate', 'numCommande',	'statut', 'codeEnvoi',	'idIntern', 'destinataire',
     'telephone', 'villeDestination.nom', 'ligneColis[0].prix', 'ligneColis[0].produit.nom', 'outils'];
+
+    params = {  };
 
   dataSource = new MatTableDataSource<Colis>();
   selection = new SelectionModel<Colis>(true, []);
@@ -93,17 +121,18 @@ export class ColisComponent implements  OnInit, AfterViewInit {
         // save cookie with table sort data here
         console.log('Sort' + JSON.stringify(e));
 
-        const params = {};
-
         if (e.direction !== ''){
-            params['sortColumn'] = e.active;
-            params['sortOrder'] = e.sortOrder;
+           this.params['sortColumn'] = e.active;
+           this.params['sortOrder'] = e.direction.toUpperCase();
 
+        }else{
+            this.params['sortColumn'] = null;
+            this.params['sortOrder'] = null;
         }
 
-        console.log('params ' + JSON.stringify(params));
+        console.log('params ' + JSON.stringify(this.params));
 
-        this.colisService.getColisFilter(params).subscribe(
+        this.colisService.getColisFilter(this.params).subscribe(
             (data: any) => {
                 this.coliss = data.content;
                 this.size = data.totalElements;
@@ -128,7 +157,7 @@ export class ColisComponent implements  OnInit, AfterViewInit {
         console.log('onPaginateChangeevent ');
         this.currentPage = event.pageIndex + 1;
         this.pageSize = event.pageSize;
-        this.chargerColis(null);
+        this.chargerColis();
     }
 
   /** Whether the number of selected elements matches the total number of rows. */
@@ -167,19 +196,54 @@ export class ColisComponent implements  OnInit, AfterViewInit {
   }
 
   ngOnInit() {
+      this.pages = new Array<number>();
+      this.pages.push(5);this.pages.push(10); this.pages.push(15);
+
+
+      const today = new Date();
+      const fromMin = new Date(today.getFullYear(), today.getMonth()-2, 1);
+      const fromMax = new Date(today.getFullYear(), today.getMonth()+1, 0);
+      const toMin = new Date(today.getFullYear(), today.getMonth()-1, 1);
+      const toMax = new Date(today.getFullYear(), today.getMonth()+2, 0);
+      this.selectedVilleUpdate = new Ville();
+      this.selectedVilleUpdate.nom = 'FES';
+      this.options = {
+          presets: this.presets,
+          format: 'mediumDate',
+          range: {fromDate: today, toDate: today},
+          applyLabel: 'Submit',
+          calendarOverlayConfig: {
+              shouldCloseOnBackdropClick: false,
+              hasBackdrop: false
+          }
+          // cancelLabel: "Cancel",
+          // excludeWeekends:true,
+          // fromMinMax: {fromDate:fromMin, toDate:fromMax},
+          // toMinMax: {fromDate:toMin, toDate:toMax}
+      };
       this.pageSize = 10;
 
+      this.chargerStatutColis();
       this.chargerVilles();
-      this.chargerColis(null);
+      this.chargerColis();
   }
 
   chargerVilles() {
     this.villeService.getVilles().subscribe(
         (data: any) => {
           this.villes = data;
+
         }
     );
   }
+
+   chargerStatutColis() {
+        this.colisService.getAllStatutColis().subscribe(
+            (data: any) => {
+                this.statuts = data;
+            }
+        );
+    }
 
     getHistoriqueColis(numCommande: string) {
         this.colisService.getHistoriques(numCommande).subscribe(
@@ -197,26 +261,27 @@ export class ColisComponent implements  OnInit, AfterViewInit {
         );
     }
 
-  chargerColis( params: any) {
-
-    if (!params){
-        params = {};
+    deleteCommentairesColis(idCommentaire: number) {
+        this.colisService.deleteCommentaire(idCommentaire).subscribe(
+            (data: any) => {
+                this.getCommentairesColis(this.currentColis.numCommande);
+            }
+        );
     }
 
+  chargerColis( ) {
 
-    if (this.authenticationService.isProfileLivreur()) {
-        params['livreur.email'] = this.authenticationService.getUserName();
+
+
+    if (!this.params){
+        this.params = {};
     }
 
-    if (this.authenticationService.isProfileClient()) {
-        params['client.ice'] = this.authenticationService.getClientId();
-    }
-
-    this.colisService.getColisFilter(params).subscribe(
+    this.colisService.getColisFilter(this.params).subscribe(
           (data: any) => {
               this.coliss = data.content;
               this.size = data.totalElements;
-              console.log('colis ' + JSON.stringify(this.coliss[0].villeDestination.nom));
+              this.isLoading = false;
               this.dataSource = new MatTableDataSource<Colis>(this.coliss);
               this.dataSource.sort = this.sort;
               this.ref.detectChanges();
@@ -226,6 +291,7 @@ export class ColisComponent implements  OnInit, AfterViewInit {
          (error: any) => {
               this.errorForm = true;
               this.errorMessage = error;
+              this.isLoading = false;
         });
 
 
@@ -238,11 +304,18 @@ export class ColisComponent implements  OnInit, AfterViewInit {
 
     const colis = new Colis();
     colis.creerPar = this.authenticationService.getCurrentUtilisateur();
-    colis.adresse = colisFormulaire.adresse;
+    colis.adresse = colisFormulaire.addresse;
+    colis.remarque = colisFormulaire.remarque;
     colis.client = this.authenticationService.getCurrentClient();
-    colis.dateCreation = new Date();
+    colis.createdDate = new Date();
+    colis.createdBy = this.authenticationService.getCurrentUtilisateur().email;
     colis.telephone = colisFormulaire.telephone;
-    colis.nomComplet = colis.destinataire;
+    colis.nomComplet = colisFormulaire.destinataire;
+    colis.destinataire = colisFormulaire.destinataire;
+    colis.idIntern = colisFormulaire.idIntern;
+    const v = new Ville();
+    v.nom= this.selectedVille;
+    colis.villeDestination = v;
 
     const lc = new LigneColis();
 
@@ -253,6 +326,7 @@ export class ColisComponent implements  OnInit, AfterViewInit {
     produit.prixVente = 1500.00;
 
     lc.produit = produit;
+    lc.prix = colisFormulaire.prix;
     lc.qte = 1;
     lc.qteLivre = 0;
     lc.qteRetourne = 0;
@@ -263,36 +337,44 @@ export class ColisComponent implements  OnInit, AfterViewInit {
     colis.remarque = colisFormulaire.remarque;
     this.colisService.ajouterColis (colis).subscribe(
         (data: Colis) => {
-          this.chargerColis(null);
+          this.chargerColis();
           this.modalService.dismissAll();
+          this.errorForm = false;
+          this.errorMessage = '';
         },
         err => {
-          console.log("error add colis ", err);
+            this.errorForm = true;
+            this.errorMessage = err.error.message;
+            console.log('error add colis ', err);
         }
     );
   }
 
   modifierColis(colis1: Colis){
+
+
+    console.log('updatedColis ' + JSON.stringify(this.updatedColis));
+    colis1 = this.updatedColis;
+    colis1.lastModifiedDate = new Date();
+    colis1.lastModifiedBy  = this.authenticationService.getCurrentUtilisateur().email;
+
+
     this.colisService.modifierColis(colis1).subscribe(
         (data: Colis) => {
-
+            this.errorUpdateForm=false;
+            this.errorUpdateMessage = '';
+            this.chargerColis();
+            this.modalService.dismissAll();
         },
         err => {
-          console.log("error add colis ", err);
+            this.errorUpdateForm=true;
+            this.errorUpdateMessage=err.error.message;
+
+            console.log("error add colis ", err);
         }
     );
   }
 
-  supprimerColis(numCommande: string){
-    this.colisService.supprimerColis(numCommande).subscribe(
-        data => {
-
-        },
-        err => {
-          console.log('error delete colis ', err);
-        }
-    );
-  }
 
   showDetails(row) {
   }
@@ -308,15 +390,9 @@ export class ColisComponent implements  OnInit, AfterViewInit {
   selectedElement(element, template: any) {
   }
 
-  applyFilter(value: any) {
-      this.filter = value.trim().toLocaleLowerCase(); // Remove whitespace
-      console.log('filter ' + this.filter );
-      this.chargerColis(null);
-  }
-
-
-    selectedColis(colis: Colis, template: TemplateRef<any>){
+  selectedColis(colis: Colis, template: TemplateRef<any>){
         this.selectColis = colis;
+        this.currentColis = colis;
         this.getHistoriqueColis(colis.numCommande);
 
         this.getCommentairesColis(colis.numCommande);
@@ -325,7 +401,7 @@ export class ColisComponent implements  OnInit, AfterViewInit {
 
         console.log(
             'this.selectColis ' + JSON.stringify(this.selectColis)
-        )
+        );
 
         this.modalService.open(template, {
             size: 'lg'
@@ -337,6 +413,19 @@ export class ColisComponent implements  OnInit, AfterViewInit {
 
     showModalDeleteColis(colis: Colis, template: TemplateRef<any>){
         this.currentColis = colis;
+        this.errorDeleteForm=false;
+        this.errorDeleteMessage='';
+        this.modalService.open(template, {
+            size: 'lg'
+        });
+        this.ref.detectChanges();
+    }
+
+    showModalModifierColis(colis: Colis, template: TemplateRef<any>){
+        this.errorUpdateMessage = '';
+        this.errorUpdateForm = false;
+        this.updatedColis = colis;
+        console.log(JSON.stringify(this.updatedColis));
         this.modalService.open(template, {
             size: 'lg'
         });
@@ -350,11 +439,12 @@ export class ColisComponent implements  OnInit, AfterViewInit {
                 this.modalService.dismissAll();
                 this.errorDeleteForm = false;
                 this.errorDeleteMessage = '';
-                this.chargerColis(null);
+                this.chargerColis();
             },
             (error: any) => {
+                console.log("error " + JSON.stringify(error));
                 this.errorDeleteForm = true;
-                this.errorDeleteMessage = error;
+                this.errorDeleteMessage = error.error.message;
         }
         );
 
@@ -362,14 +452,23 @@ export class ColisComponent implements  OnInit, AfterViewInit {
     }
 
     addCommentairesColis(numCommande: string){
+       console.log('Commentaire ' + this.newCommentaire);
        const commentaire = new Commentaire();
        commentaire.utilisateur = this.authenticationService.getCurrentUtilisateur();
+       commentaire.createdBy = this.authenticationService.getCurrentUtilisateur().email;
        commentaire.createdDate = new Date();
-       commentaire.colis = this.currentColis;
+
+       commentaire.commentaire = this.newCommentaire;
+       const c = new Colis();
+       c.numCommande = this.currentColis.numCommande;
+       commentaire.colis = c;
+       //this.newCommentaire = null;
+
+       console.log(' commentaire ' + JSON.stringify(commentaire));
 
        this.colisService.addCommentaire(numCommande, commentaire).subscribe(
             (data: any) => {
-                this.modalService.dismissAll();
+                //this.modalService.dismissAll();
                 this.errorAddCommentaireForm = false;
                 this.errorAddCommentaireMessage = '';
                 this.getCommentairesColis(numCommande);
@@ -385,5 +484,39 @@ export class ColisComponent implements  OnInit, AfterViewInit {
 
     ajouterMultipleColis(value){
 
+    }
+
+
+    updatedFiltre(column: string, value: any) {
+      this.isLoading = true;
+
+      console.log('column '+ column);
+
+      if(column=== 'periode'){
+          if(value.start!=null && value.end!=null){
+              value = moment(value.start).format('YYYY-MM-DD') + 'TO' + moment(value.end).format('YYYY-MM-DD');
+
+          }
+       }
+
+       if(value!=null && value !== undefined && value!==''){
+           console.log('value!=null ' + value);
+           this.params[column] = value;
+       }else{
+           console.log('delete ' + column);
+           this.params[column] = null;
+       }
+
+       console.log('filtre '+ JSON.stringify(this.params));
+
+       this.colisService.getColisFilter(this.params).subscribe(
+            (data: any) => {
+                this.coliss = data.content;
+                this.size = data.totalElements;
+                this.isLoading = false;
+                this.dataSource = new MatTableDataSource<Colis>(this.coliss);
+                this.dataSource.sort = this.sort;
+                this.ref.detectChanges();
+            });
     }
 }

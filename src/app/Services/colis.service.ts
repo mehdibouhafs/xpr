@@ -34,8 +34,12 @@ export class ColisService{
     return this.http.post(this.host + '/colis/addCommentaire/' + numCommande, commentaire, {headers: new HttpHeaders({'Authorization': this.authenticationService.getToken()})});
   }
 
+  deleteCommentaire(idCommentaire: number){
+    return this.http.delete(this.host + '/colis/deleteCommentaire/' + idCommentaire, {headers: new HttpHeaders({'Authorization': this.authenticationService.getToken()})});
+  }
+
   modifierColis(colis: Colis){
-    return this.http.put(this.host + '/colis/' + colis.numCommande, colis, {headers: new HttpHeaders({'Authorization': this.authenticationService.getToken()})});
+    return this.http.put(this.host + '/colis/update/' + colis.numCommande, colis, {headers: new HttpHeaders({'Authorization': this.authenticationService.getToken()})});
   }
 
   updateStatutColis(numCommande: string, statutColisId: number ){
@@ -44,7 +48,7 @@ export class ColisService{
   }
 
   supprimerColis(numCommande: string){
-    return this.http.delete(this.host + '/colis/' + numCommande,{headers: new HttpHeaders( { 'Authorization': this.authenticationService.getToken()})});
+    return this.http.delete(this.host + '/colis/deleteColis/' + numCommande,{headers: new HttpHeaders( { 'Authorization': this.authenticationService.getToken()})});
   }
 
   private toQueryString(query): string {
@@ -79,6 +83,12 @@ export class ColisService{
 
   getColisByClientAndEntite(ice: string, mc: string, entiteId: number, page: number, size: number) {
     return this.http.get(this.host + '/chercherColisByClientAndEntitieId?entiteId= ' + entiteId + '&ice=' + ice + '&motCle=' + mc + '&size=' + size +'&page=' +page,{headers: new HttpHeaders({'Authorization': this.authenticationService.getToken()})});
+  }
+
+
+
+  getAllStatutColis(){
+    return this.http.get(this.host + '/colis/getAllStatutsColis',{headers: new HttpHeaders({'Authorization': this.authenticationService.getToken()})});
   }
 
 }

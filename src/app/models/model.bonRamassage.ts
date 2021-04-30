@@ -29,6 +29,8 @@ export class BonRamassage extends XprBaseModel{
 
     destination: Agence;
 
+    colis: Array<Colis> = new Array();
+
 
     ligneBonExpeditions: Array<LigneBonExpedition> = new Array();
 
@@ -38,14 +40,20 @@ export class BonRamassage extends XprBaseModel{
 
     disabled: boolean;
 
-     colis: Array<Colis> = new Array();
-
     agence: Agence;
 
     agenceDepart: Agence;
 
 
   agenceDestination: Agence;
+
+  nbColis: number;
+
+  colisRamasse: number;
+
+  colisExpedie: number;
+
+  colisEnAttente: number;
 
 
 }

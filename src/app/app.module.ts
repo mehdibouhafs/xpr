@@ -94,6 +94,9 @@ import {MatSortModule} from '@angular/material/sort';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import {Autorisation} from './Services/autorisation';
 import localeFr from '@angular/common/locales/fr';
+import {NgxMatDrpModule} from 'ngx-mat-daterange-picker';
+import {NgxDaterangepickerMd} from 'ngx-daterangepicker-material';
+
 
 registerLocaleData(localeFr, 'fr');
 
@@ -175,7 +178,8 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     MatSortModule,
     MatProgressSpinnerModule,
     ChartsModule,
-    NgSelectModule
+    NgSelectModule,
+    NgxDaterangepickerMd.forRoot()
   ],
   providers: [
     {

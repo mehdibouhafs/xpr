@@ -4,7 +4,7 @@ import {Entite} from './model.entite';
 
 export class StatutColis{
 
-      id: number;
+      code: string;
 
       libelle: string;
 
