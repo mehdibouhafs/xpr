@@ -80,7 +80,7 @@ export class BonsRamassageComponent implements OnInit {
 
   selectedPeriode: {start: any, end: any};
 
-  displayedColumns: string[] = ['select', 'createdDate', 'nom',	'statut', 'nbColis','colisRamasse','colisExpedie','colisEnAttente','outils'];
+  displayedColumns: string[] = ['select', 'createdDate', 'nom',	'statut', 'nbColis','colisRamasse','colisExpedie','colisEnAttente','actions','outils'];
 
   displayedColumnsColis: string[] = [ 'createdDate', 'numCommande',	'statut','idIntern', 'destinataire',
     'telephone', 'villeDestination.nom', 'ligneColis[0].prix', 'ligneColis[0].produit.nom', 'outils'];
